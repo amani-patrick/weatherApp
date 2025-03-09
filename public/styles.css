@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+    --primary-color: #1e3a8a;
+    --secondary-color: #3b82f6;
+    --accent-color: #f59e0b;
+    --background-color: #f3f4f6;
+    --text-color: #1f2937;
+    --card-bg: #ffffff;
+    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.dashboard {
+    max-width: 1200px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    padding: 20px;
+}
+
+.title-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.title-section p {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    margin-top: 10px;
+}
+
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.metric-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-icon {
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.metric-label {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+
+.metric-unit {
+    font-size: 1.5rem;
+    vertical-align: super;
+    margin-left: 5px;
+}
+
+.metric-average {
+    background: var(--secondary-color);
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 15px;
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.chart-section {
+    grid-column: span 2;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.chart-container {
+    height: 400px;
+    width: 100%;
+    position: relative;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-align: left;
+}
+
+.status-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.status-icon {
+    margin-right: 8px;
+    font-size: 1rem;
+    color: var(--secondary-color);
+}
+
+.status-value {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-left: 5px;
+}
+
+.pulse {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4cd137;
+    margin-right: 10px;
+    animation: pulse 2s infinite;
+}
+
+.pulse.error {
+    background: #e84118;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 209, 55, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(76, 209, 55, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 209, 55, 0);
+    }
+}
+
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #f44336;
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+}
