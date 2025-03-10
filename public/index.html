@@ -23,7 +23,7 @@
                 <div class="metric-label">Temperature</div>
                 <div class="metric-value"><span id="temp">--</span><span class="metric-unit">°C</span></div>
                 <div class="metric-average">
-                    <i class="fas fa-clock"></i> 5min avg: <span id="avg-temp">--</span>°C
+                    <i class="fas fa-clock"></i> <span id="interval">5</span>min avg: <span id="avg-temp">--</span>°C
                 </div>
                 <div class="live-indicator">
                     <div class="live-dot"></div> LIVE
@@ -35,7 +35,7 @@
                 <div class="metric-label">Humidity</div>
                 <div class="metric-value"><span id="humidity">--</span><span class="metric-unit">%</span></div>
                 <div class="metric-average">
-                    <i class="fas fa-clock"></i> 5min avg: <span id="avg-humidity">--</span>%
+                    <i class="fas fa-clock"></i> <span id="humidity-interval">5</span>min avg: <span id="avg-humidity">--</span>%
                 </div>
                 <div class="live-indicator">
                     <div class="live-dot"></div> LIVE
@@ -43,7 +43,7 @@
             </div>
             
             <div class="chart-section">
-                <h2 class="section-title">Environmental Trends</h2>
+                <h2 class="section-title">Weather Data</h2>
                 <div class="chart-container">
                     <canvas id="weatherChart"></canvas>
                 </div>
@@ -60,6 +60,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="interval-selector">
+            <label for="interval-select">Select Interval:</label>
+            <select id="interval-select">
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="30">30 minutes</option>
+            </select>
         </div>
     </div>
     
@@ -217,7 +226,7 @@
                 });
         }
 
-        // Function to update the chart with 5-minute interval data
+        // Function to update the chart with interval data
         function updateChartWithHistoricalData() {
             axios.get('/api/weather/history')
                 .then(response => {
@@ -324,7 +333,20 @@
 
         // Update chart with historical data regularly
         updateChartWithHistoricalData(); // Initial load
-        setInterval(updateChartWithHistoricalData, 30000); 
+        setInterval(updateChartWithHistoricalData, 60000); // Update every minute
+
+        // Handle interval change
+        document.getElementById('interval-select').addEventListener('change', function() {
+            const interval = parseInt(this.value);
+            axios.post('/api/weather/interval', { interval })
+                .then(response => {
+                    document.getElementById('interval').innerText = interval;
+                    updateChartWithHistoricalData();
+                })
+                .catch(error => {
+                    console.error('Error updating interval:', error);
+                });
+        });
     </script>
 </body>
 </html>

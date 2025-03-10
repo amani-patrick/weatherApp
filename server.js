@@ -42,6 +42,8 @@ function createTables() {
 let latestTemp = null;
 let latestHumidity = null;
 let lastAverageTime = null;
+let currentInterval = 5; // Default interval in minutes
+
 app.post('/api/weather/data', (req, res) => {
   const { type, value, timestamp } = req.body;
   
@@ -72,16 +74,26 @@ app.post('/api/weather/data', (req, res) => {
   );
 });
 
-// Calculate 5-minute averages and store them
+app.post('/api/weather/interval', (req, res) => {
+  const { interval } = req.body;
+  
+  if (![5, 10, 30].includes(interval)) {
+    return res.status(400).json({ error: 'Invalid interval' });
+  }
+  
+  currentInterval = interval;
+  res.status(200).json({ message: 'Interval updated successfully' });
+});
+
 function calculateAndStoreAverages() {
   const currentTime = new Date();
   
-  // If we've already calculated averages in the last 4 minutes, don't recalculate
-  if (lastAverageTime && (currentTime - lastAverageTime < 4 * 60 * 1000)) {
+  // If we've already calculated averages in the last (currentInterval - 1) minutes, don't recalculate
+  if (lastAverageTime && (currentTime - lastAverageTime < (currentInterval - 1) * 60 * 1000)) {
     return;
   }
   
-  const fiveMinutesAgo = new Date(currentTime - 5 * 60 * 1000).toISOString();
+  const intervalAgo = new Date(currentTime - currentInterval * 60 * 1000).toISOString();
   const currentTimeISO = currentTime.toISOString();
   
   // Calculate average temperature
@@ -89,7 +101,7 @@ function calculateAndStoreAverages() {
     `SELECT AVG(value) as avg_value 
      FROM raw_data 
      WHERE type = 'temperature' AND timestamp > ? AND timestamp <= ?`,
-    [fiveMinutesAgo, currentTimeISO],
+    [intervalAgo, currentTimeISO],
     (err, tempResult) => {
       if (err) {
         return console.error('Error calculating average temperature:', err);
@@ -100,7 +112,7 @@ function calculateAndStoreAverages() {
         `SELECT AVG(value) as avg_value 
          FROM raw_data 
          WHERE type = 'humidity' AND timestamp > ? AND timestamp <= ?`,
-        [fiveMinutesAgo, currentTimeISO],
+        [intervalAgo, currentTimeISO],
         (err, humidityResult) => {
           if (err) {
             return console.error('Error calculating average humidity:', err);
@@ -119,7 +131,7 @@ function calculateAndStoreAverages() {
                 if (err) {
                   console.error('Error storing average data:', err);
                 } else {
-                  console.log('Stored 5-minute averages successfully at', new Date().toLocaleTimeString());
+                  console.log(`Stored ${currentInterval}-minute averages successfully at`, new Date().toLocaleTimeString());
                   lastAverageTime = currentTime;
                 }
               }
@@ -133,12 +145,14 @@ function calculateAndStoreAverages() {
 
 // Get historical averaged data for the chart
 app.get('/api/weather/history', (req, res) => {
-  // Get the last 12 entries (1 hour of data with 5-minute intervals)
+  // Get the last entries based on the current interval
+  const limit = 60 / currentInterval;
   db.all(
     `SELECT avg_temperature, avg_humidity, timestamp 
      FROM avg_data 
      ORDER BY timestamp DESC 
-     LIMIT 12`,
+     LIMIT ?`,
+    [limit],
     (err, rows) => {
       if (err) {
         console.error('Error fetching historical data:', err);
@@ -151,7 +165,7 @@ app.get('/api/weather/history', (req, res) => {
   );
 });
 
-// Calculate 5-minute averages more frequently to ensure we have data
+// Calculate averages more frequently to ensure we have data
 setInterval(calculateAndStoreAverages, 60 * 1000); // Check every minute
 
 // Database Viewer Routes

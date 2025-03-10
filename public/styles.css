@@ -211,6 +211,33 @@ body {
     100% { opacity: 1; }
 }
 
+.interval-selector {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.interval-selector label {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.interval-selector select {
+    font-size: 1rem;
+    padding: 5px 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.interval-selector select:focus {
+    border-color: var(--secondary-color);
+}
+
 @media (max-width: 768px) {
     .main-container {
         grid-template-columns: 1fr;
