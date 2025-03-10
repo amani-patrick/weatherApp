@@ -23,7 +23,7 @@ This project is a real-time MQTT Weather Station Dashboard that displays tempera
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/weather-station-dashboard.git
+    git clone https://github.com/amani-patrick/weather-station-dashboard.git
     cd weather-station-dashboard
     ```
 
